@@ -1135,6 +1135,7 @@ SELECT
     SUM(gifts_delivered) OVER(ORDER BY delivery_date) as cumulative_sum
 FROM deliveries
 ```
+</details>
 
 | delivery_date | gifts_delivered | cumulative_sum |
 |---------------|-----------------|----------------|
