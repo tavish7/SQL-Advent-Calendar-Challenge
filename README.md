@@ -2,8 +2,7 @@
 
 <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3gxMmx4ZWQ1dzVxd3V2YmNhaGg0ZXN0d2prdzN4Nmo3NW5taXU1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/M06D4VQgwKuqI/giphy.gif">
 
-> This is a 24 Day challenge hosted by 
-<a href="https://www.linkedin.com/in/data-dawn/" target="_blank">Dawn Choo</a>
+> This is a 24 Day challenge hosted by [Dawn Choo](https://www.linkedin.com/in/data-dawn/).<br> 
 
 This challenge started on 1st Dec 2024, where you get new questions each day. 
 
