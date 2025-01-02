@@ -567,49 +567,52 @@ LIMIT 3
 ---
 
 ## Day 13:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+We need to make sure Santa's sleigh is properly balanced. Find the total weight of gifts for each recipient.
 
 **Table name:** gifts
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| gift_id | gift_name     | recipient | weight_kg |
+|---------|---------------|-----------|-----------|
+| 1       | Toy Train     | John      | 2.5       |
+| 2       | Chocolate Box | Alice     | 0.8       |
+| 3       | Teddy Bear    | Sophia    | 1.2       |
+| 4       | Board Game    | John      | 0.9       |
 
 <br>
 
-***Difficulty Level:*** Easy
+***Difficulty Level:*** Medium
 
 <br>
 
 *Query*
 
 ```sql
-SELECT *
+SELECT
+    recipient,
+    SUM(weight_kg) AS total_weight
 FROM gifts
-WHERE weight_kg > 1.0
+GROUP BY 1
+ORDER BY 2
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| recipient | total_weight |
+|-----------|--------------|
+| Alice     | 0.8          |
+| Sophia    | 1.2          |
+| John      | 3.4          |
 
 ---
 
 ## Day 14:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+Which ski resorts had snowfall greater than 50 inches?
 
-**Table name:** gifts
+**Table name:** snowfall
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| resort_name       | location | snowfall_inches |
+|-------------------|----------|-----------------|
+| Snowy Peaks       | Colorado | 60              |
+| Winter Wonderland | Utah     | 45              |
+| Frozen Slopes     | Alaska   | 75              |
 
 <br>
 
@@ -620,95 +623,131 @@ Santa wants to know which gifts weigh more than 1 kg. Can you list them?
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT
+    resort_name,
+    location
+FROM snowfall
+WHERE snowfall_inches > 50
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| resort_name   | location |
+|---------------|----------|
+| Snowy Peaks   | Colorado |
+| Frozen Slopes | Alaska   |
 
 ---
 
 ## Day 15:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+A family reunion is being planned, and the organizer wants to identify the three family members with the most children. Write a query to calculate the total number of children for each parent and rank them. Include the parent’s name and their total number of children in the result.
 
-**Table name:** gifts
+**Table name:** family_members
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| member_id | name    | age |
+|-----------|---------|-----|
+| 1         | Alice   | 30  |
+| 2         | Bob     | 58  |
+| 3         | Charlie | 33  |
+| 4         | Diana   | 55  |
+| 5         | Eve     | 5   |
+| 6         | Frank   | 60  |
+| 7         | Grace   | 32  |
+| 8         | Hannah  | 8   |
+| 9         | Ian     | 12  |
+| 10        | Jack    | 3   |
 
 <br>
 
-***Difficulty Level:*** Easy
+**Table name:** parent_child_relationships
+
+| parent_id | child_id |
+|-----------|----------|
+| 2         | 1        |
+| 3         | 5        |
+| 4         | 1        |
+| 6         | 7        |
+| 6         | 8        |
+| 7         | 9        |
+| 7         | 10       |
+| 4         | 8        |
+
+<br>
+
+***Difficulty Level:*** Hard
 
 <br>
 
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT
+    fm.name parent_name,
+    COUNT(pcr.child_id) total_children,
+    RANK() OVER(ORDER BY COUNT(pcr.child_id) DESC) AS rank
+FROM family_members fm
+JOIN parent_child_relationships pcr ON fm.member_id = pcr.parent_id
+GROUP BY fm.name
+ORDER BY rank
+LIMIT 3
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| parent_name | total_children | rank |
+|-------------|----------------|------|
+| Grace       | 2              | 1    |
+| Frank       | 2              | 1    |
+| Diana       | 2              | 1    |
 
 ---
 
 ## Day 16:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+As the owner of a candy store, you want to understand which of your products are selling best. Write a query to calculate the total revenue generated from each candy category.
 
-**Table name:** gifts
+**Table name:** candy_sales
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| sale_id | candy_name             | quantity_sold | price_per_unit | category  |
+|---------|------------------------|---------------|----------------|-----------|
+| 1       | Candy Cane             | 20            | 1.5            | Sweets    |
+| 2       | Chocolate Bar          | 10            | 2              | Chocolate |
+| 3       | Lollipop               | 5             | 0.75           | Sweets    |
+| 4       | Dark Chocolate Truffle | 8             | 2.5            | Chocolate |
+| 5       | Gummy Bears            | 15            | 1.2            | Sweets    |
+| 6       | Chocolate Fudge        | 12            | 3              | Chocolate |
 
 <br>
 
-***Difficulty Level:*** Easy
+***Difficulty Level:*** Medium
 
 <br>
 
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT
+    category,
+    SUM(quantity_sold*price_per_unit) AS total_revenue
+FROM candy_sales
+GROUP BY category
+ORDER BY total_revenue DESC
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| category  | total_revenue |
+|-----------|---------------|
+| Chocolate | 76            |
+| Sweets    | 51.75         |
 
 ---
 
 ## Day 17:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+The Grinch is planning out his pranks for this holiday season. Which pranks have a difficulty level of “Advanced” or “Expert"? List the prank name and location (both in descending order).
 
-**Table name:** gifts
+**Table name:** grinch_pranks
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| prank_id | prank_name            | location             | difficulty |
+|----------|-----------------------|----------------------|------------|
+| 1        | Stealing Stockings    | Whoville             | Beginner   |
+| 2        | Christmas Tree Topple | Whoville Town Square | Advanced   |
+| 3        | Present Swap          | Cindy Lous House     | Beginner   |
+| 4        | Sleigh Sabotage       | Mount Crumpit        | Expert     |
+| 5        | Chimney Block         | Mayors Mansion       | Expert     |
 
 <br>
 
@@ -719,96 +758,151 @@ Santa wants to know which gifts weigh more than 1 kg. Can you list them?
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT prank_name, location
+FROM grinch_pranks
+WHERE difficulty = 'Advanced' OR difficulty = 'Expert'
+ORDER BY location DESC, prank_name DESC
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| prank_name            | location             |
+|-----------------------|----------------------|
+| Christmas Tree Topple | Whoville Town Square |
+| Sleigh Sabotage       | Mount Crumpit        |
+| Chimney Block         | Mayors Mansion       |
 
 ---
 
 ## Day 18:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+A travel agency is promoting activities for a "Summer Christmas" party. They want to identify the top 2 activities based on the average rating. Write a query to rank the activities by average rating.
 
-**Table name:** gifts
+**Table name:** activities
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| activity_id | activity_name   |
+|-------------|-----------------|
+| 1           | Surfing Lessons |
+| 2           | Jet Skiing      |
+| 3           | Sunset Yoga     |
 
 <br>
 
-***Difficulty Level:*** Easy
+**Table name:** activity_ratings
+
+| rating_id | activity_id | rating |
+|-----------|-------------|--------|
+| 1         | 1           | 4.7    |
+| 2         | 1           | 4.8    |
+| 3         | 1           | 4.9    |
+| 4         | 2           | 4.6    |
+| 5         | 2           | 4.7    |
+| 6         | 2           | 4.8    |
+| 7         | 2           | 4.9    |
+| 8         | 3           | 4.8    |
+| 9         | 3           | 4.7    |
+| 10        | 3           | 4.9    |
+| 11        | 3           | 4.8    |
+| 12        | 3           | 4.9    |
+
+<br>
+
+***Difficulty Level:*** Hard
 
 <br>
 
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT 
+    a.activity_name,
+    AVG(r.rating) AS average_rating
+FROM activities a
+JOIN  activity_ratings r ON a.activity_id = r.activity_id
+GROUP BY activity_name
+ORDER BY average_rating DESC
+LIMIT 2
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| activity_name   | average_rating |
+|-----------------|----------------|
+| Sunset Yoga     | 4.82           |
+| Surfing Lessons | 4.8            |
 
 ---
 
 
 ## Day 19:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+Scientists are studying the diets of polar bears. Write a query to find the maximum amount of food (in kilograms) consumed by each polar bear in a single meal December 2024. Include the bear_name and biggest_meal_kg, and sort the results in descending order of largest meal consumed.
 
-**Table name:** gifts
+**Table name:** polar_bears
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| bear_id | bear_name | age |
+|---------|-----------|-----|
+| 1       | Snowball  | 10  |
+| 2       | Frosty    | 7   |
+| 3       | Iceberg   | 15  |
 
 <br>
 
-***Difficulty Level:*** Easy
+**Table name:** meal_log
+
+| log_id | bear_id | food_type | food_weight_kg | date       |
+|--------|---------|-----------|----------------|------------|
+| 1      | 1       | Seal      | 30             | 2024-12-01 |
+| 2      | 2       | Fish      | 15             | 2024-12-02 |
+| 3      | 1       | Fish      | 10             | 2024-12-03 |
+| 4      | 3       | Seal      | 25             | 2024-12-04 |
+| 5      | 2       | Seal      | 20             | 2024-12-05 |
+| 6      | 3       | Fish      | 18             | 2024-12-06 |
+
+<br>
+
+***Difficulty Level:*** Medium
 
 <br>
 
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT 
+    p.bear_name,
+    MAX(m.food_weight_kg) AS biggest_meal_kg
+FROM polar_bears p
+JOIN meal_log m ON p.bear_id = m.bear_id
+WHERE m.date BETWEEN '2024-12-01' AND '2024-12-31'
+GROUP BY 1
+ORDER BY 2 DESC
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| bear_name | biggest_meal_kg |
+|-----------|-----------------|
+| Snowball  | 30              |
+| Iceberg   | 25              |
+| Frosty    | 20              |
 
 ---
 
 ## Day 20:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+We are looking for cheap gifts at the market. Which vendors are selling items priced below $10? List the unique (i.e. remove duplicates) vendor names.
 
-**Table name:** gifts
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+**Table name:** vendors
+
+| vendor_id | vendor_name    | market_location |
+|-----------|----------------|-----------------|
+| 1         | Cozy Crafts    | Downtown Square |
+| 2         | Sweet Treats   | Central Park    |
+| 3         | Winter Warmers | Downtown Square |
+
+<br>
+
+**Table name:** item_prices
+
+| item_id | vendor_id | item_name          | price_usd |
+|---------|-----------|--------------------|-----------|
+| 1       | 1         | Knitted Scarf      | 25        |
+| 2       | 2         | Hot Chocolate      | 5         |
+| 3       | 2         | Gingerbread Cookie | 3.5       |
+| 4       | 3         | Wool Hat           | 18        |
+| 5       | 3         | Santa Pin          | 2         |
 
 <br>
 
@@ -819,146 +913,235 @@ Santa wants to know which gifts weigh more than 1 kg. Can you list them?
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT DISTINCT(v.vendor_name)
+FROM vendors v
+JOIN item_prices i ON v.vendor_id = i.vendor_id
+WHERE i.price_usd < 10
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| vendor_name    |
+|----------------|
+| Sweet Treats   |
+| Winter Warmers |
 
 ---
 
 ## Day 21:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+Santa needs to optimize his sleigh for Christmas deliveries. Write a query to calculate the total weight of gifts for each recipient type (good or naughty) and determine what percentage of the total weight is allocated to each type. Include the recipient_type, total_weight, and weight_percentage in the result.
 
 **Table name:** gifts
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| gift_id | gift_name     | recipient_type | weight_kg |
+|---------|---------------|----------------|-----------|
+| 1       | Toy Train     | good           | 2.5       |
+| 2       | Lumps of Coal | naughty        | 1.5       |
+| 3       | Teddy Bear    | good           | 1.2       |
+| 4       | Chocolate Bar | good           | 0.3       |
+| 5       | Board Game    | naughty        | 1.8       |
 
 <br>
 
-***Difficulty Level:*** Easy
+***Difficulty Level:*** Hard
 
 <br>
 
 *Query*
 
 ```sql
-SELECT *
+SELECT
+    recipient_type,
+    SUM(weight_kg) AS total_weight,
+    SUM(weight_kg)*100 / SUM(weight_kg) OVER() AS weight_percentage 
 FROM gifts
-WHERE weight_kg > 1.0
+GROUP BY recipient_type
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+<details>
+<summary>
+Using CTE
+</summary>
+
+```sql
+WITH overall_total_weight AS(
+    SELECT
+        SUM(weight_kg) as tw
+    FROM gifts
+)
+
+SELECT
+    recipient_type,
+    SUM(weight_kg) AS total_weight,
+    ROUND(SUM(weight_kg)*100 / tw,2) AS weight_percentage 
+FROM gifts, overall_total_weight
+GROUP BY recipient_type
+
+```
+</details>
+
+<details>
+<summary>
+Using Subquery
+</summary>
+
+```sql
+SELECT
+    recipient_type,
+    SUM(weight_kg) AS total_weight,
+    ROUND(
+        SUM(weight_kg)*100 / (SELECT SUM(weight_kg) FROM gifts),2
+        ) AS weight_percentage 
+FROM gifts
+GROUP BY recipient_type
+```
+</details>
+
+| recipient_type | total_weight | weight_percentage |
+|----------------|--------------|-------------------|
+| good           | 4            | 100               |
+| naughty        | 3.3          | 82.5              |
 
 ---
 
 ## Day 22:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+We are hosting a gift party and need to ensure every guest receives a gift. Using the guests and guest_gifts tables, write a query to identify the guest(s) who have not been assigned a gift (i.e. they are not listed in the guest_gifts table).
 
-**Table name:** gifts
+**Table name:** guests
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| guest_id | guest_name    |
+|----------|---------------|
+| 1        | Cindy Lou     |
+| 2        | The Grinch    |
+| 3        | Max the Dog   |
+| 4        | Mayor May Who |
 
 <br>
 
-***Difficulty Level:*** Easy
+**Table name:** guest_gifts
+
+| gift_id | guest_id | gift_name   |
+|---------|----------|-------------|
+| 1       | 1        | Toy Train   |
+| 2       | 1        | Plush Bear  |
+| 3       | 2        | Bag of Coal |
+| 4       | 2        | Sleigh Bell |
+| 5       | 3        | Dog Treats  |
+
+<br>
+
+***Difficulty Level:*** Medium
 
 <br>
 
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT g.guest_name
+FROM guests g
+LEFT JOIN guest_gifts gg ON g.guest_id = gg.guest_id
+WHERE gg.guest_id IS NULL
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| guest_name    |
+|---------------|
+| Mayor May Who |
 
 ---
 
 ## Day 23:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+The Grinch tracked his weight every day in December to analyze how it changed daily. Write a query to return the weight change (in pounds) for each day, calculated as the difference from the previous day's weight.
 
-**Table name:** gifts
+**Table name:** grinch_weight_log
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| log_id | day_of_month | weight |
+|--------|--------------|--------|
+| 1      | 1            | 250    |
+| 2      | 2            | 248    |
+| 3      | 3            | 249    |
+| 4      | 4            | 247    |
+| 5      | 5            | 246    |
+| 6      | 6            | 248    |
 
 <br>
 
-***Difficulty Level:*** Easy
+***Difficulty Level:*** Medium
 
 <br>
 
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT
+    day_of_month,
+    weight AS current_weight,
+    weight - LAG(weight) OVER(ORDER BY day_of_month) weight_change
+FROM grinch_weight_log
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+<details>
+<summary>
+Using CTE
+</summary>
+
+```sql
+WITH wt AS 
+(
+    SELECT
+        day_of_month,
+        weight AS current_weight,
+        LAG(weight) OVER(ORDER BY day_of_month) prev_weight
+    FROM grinch_weight_log
+)
+SELECT *,
+    current_weight - prev_weight AS weight_change
+FROM wt
+```
+
+| day_of_month | current_weight | weight_change |
+|--------------|----------------|---------------|
+| 1            | 250            |               |
+| 2            | 248            | -2            |
+| 3            | 249            | 1             |
+| 4            | 247            | -2            |
+| 5            | 246            | -1            |
+| 6            | 248            | 2             |
 
 ---
 
 ## Day 24:
-Santa wants to know which gifts weigh more than 1 kg. Can you list them?
+Santa is tracking how many presents he delivers each night leading up to Christmas. He wants a running total to see how many gifts have been delivered so far on any given night. Using the deliveries table, calculate the cumulative sum of gifts delivered, ordered by the delivery date.
 
-**Table name:** gifts
+**Table name:** deliveries
 
-| gift_name     | recipient | weight_kg |
-|---------------|-----------|-----------|
-| Toy Train     | John      | 2.5       |
-| Chocolate Box | Alice     | 0.8       |
-| Teddy Bear    | Sophia    | 1.2       |
-| Board Game    | Liam      | 0.9       |
+| delivery_date | gifts_delivered |
+|---------------|-----------------|
+| 2024-12-20    | 120             |
+| 2024-12-21    | 150             |
+| 2024-12-22    | 200             |
+| 2024-12-23    | 300             |
+| 2024-12-24    | 500             |
 
 <br>
 
-***Difficulty Level:*** Easy
+***Difficulty Level:*** Hard
 
 <br>
 
 *Query*
 
 ```sql
-SELECT *
-FROM gifts
-WHERE weight_kg > 1.0
+SELECT
+    delivery_date,
+    gifts_delivered,
+    SUM(gifts_delivered) OVER(ORDER BY delivery_date) as cumulative_sum
+FROM deliveries
 ```
 
-| gift_name  | recipient | weight_kg |
-|------------|-----------|-----------|
-| Toy Train  | John      | 2.5       |
-| Teddy Bear | Sophia    | 1.2       |
+| delivery_date | gifts_delivered | cumulative_sum |
+|---------------|-----------------|----------------|
+| 2024-12-20    | 120             | 120            |
+| 2024-12-21    | 150             | 270            |
+| 2024-12-22    | 200             | 470            |
+| 2024-12-23    | 300             | 770            |
+| 2024-12-24    | 500             | 1270           |
 
 ---
