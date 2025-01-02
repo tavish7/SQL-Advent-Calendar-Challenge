@@ -1,4 +1,5 @@
 # 📈Solutions for the Challenge🤔
+***
 
 ## Day 1: 
 
